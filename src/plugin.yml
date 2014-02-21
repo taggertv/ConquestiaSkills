@@ -1,0 +1,17 @@
+name: ConquestiaSkills
+main: com.ultiferrago.conquestiaskills.ConquestiaSkills
+version: 0.1
+author: Ultiferrago
+depend: [SkillAPI]
+
+commands:
+  cq:
+    description: Only used for bonus xp (so far).
+
+permissions:
+  conquestiaskills.admin:
+    default: op
+    
+
+
+
