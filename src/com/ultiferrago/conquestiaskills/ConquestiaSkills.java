@@ -186,14 +186,17 @@ public class ConquestiaSkills extends JavaPlugin implements SkillPlugin, Listene
   @EventHandler(priority=EventPriority.HIGH, ignoreCancelled=false)
     public void onExpChange(PlayerExperienceGainEvent event)
     {
-        if ((System.currentTimeMillis() - savedTime) < timeLength) {
-            event.setExp((int)(event.getExp()*this.factor));
-        }
-        if (playersInArena.contains(event.getPlayerData().getPlayer()))
+        if (!event.isCommandExp())
         {
-            event.setExp((int)(event.getExp()*0.25));
+             if ((System.currentTimeMillis() - savedTime) < timeLength) {
+                event.setExp((int)(event.getExp()*this.factor));
+            }
+            if (playersInArena.contains(event.getPlayerData().getPlayer()))
+            {
+                event.setExp((int)(event.getExp()*0.25));
+            }
+            event.getPlayerData().getPlayer().sendMessage("You gained " + event.getExp() + " xp");
         }
-        event.getPlayerData().getPlayer().sendMessage("You gained " + event.getExp() + " xp");
     }
   
   @EventHandler(priority=EventPriority.HIGH, ignoreCancelled=false)
