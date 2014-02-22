@@ -68,6 +68,7 @@ public class Mark extends ClassSkill implements SkillShot {
        }
        else {
             player.sendMessage("You require " + (int) getAttribute("reagent-cost", level) + " gold ingots to mark your location.");
+            player.sendMessage(ChatColor.DARK_RED + "You require " + (int) getAttribute("reagent-cost", level) + " gold ingots to mark your location.");
             return false;
         }
         Config markConfig = new Config(this.plugin, "Marks" + File.separator + player.getName());
