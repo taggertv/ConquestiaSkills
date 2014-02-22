@@ -12,6 +12,7 @@ import com.ultiferrago.conquestiaskills.ConquestiaSkills;
 import java.util.List;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -22,6 +23,7 @@ public class CmdBonusXp implements ICommand
     ConquestiaSkills cq;
     long time;
     double factor;
+    String playerName;
   public void execute(CommandHandler handler, Plugin plugin, CommandSender sender, String[] args)
   {
     time = 0;
@@ -37,6 +39,7 @@ public class CmdBonusXp implements ICommand
       String factorString = args[1];
       double factorTemp = Double.parseDouble(factorString);
       time = timeTemp;
+      playerName = args[2];
       factor = factorTemp;
       
       }
@@ -51,6 +54,10 @@ public class CmdBonusXp implements ICommand
       else
       {
         cq.doubleXp(System.currentTimeMillis(),this.time, this.factor);
+        for (Player players : cq.getServer().getOnlinePlayers())
+        {
+            players.sendMessage(ChatColor.GOLD + playerName + " purchased " + time + " hours of " + " factor " + "X exp");
+        }
       }
     }
     else
@@ -66,7 +73,7 @@ public class CmdBonusXp implements ICommand
 
   public String getArgsString(Plugin plugin)
   {
-    return "<time> <factor>";
+    return "<time> <factor> <player>";
   }
 
   public String getDescription(Plugin plugin)

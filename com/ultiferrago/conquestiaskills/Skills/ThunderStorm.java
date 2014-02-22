@@ -78,7 +78,7 @@ public class ThunderStorm extends ClassSkill implements SkillShot {
     
     Location playerLocation = player.getLocation();
     
-    List<Location> circularOutline = ThunderStorm.circle(player, playerLocation, radius, 1, true, false, 3);
+    List<Location> circularOutline = ThunderStorm.circle(player, playerLocation, radius, 1, true, false, 10);
     ThunderStorm.FireworkEffectPlayer boom = new ThunderStorm.FireworkEffectPlayer();
     
     FireworkEffect fe = FireworkEffect.builder().with(FireworkEffect.Type.STAR).withColor(Color.BLUE).withColor(Color.BLACK).withFade(Color.GRAY).build();

@@ -25,6 +25,7 @@ import org.bukkit.util.Vector;
  * Dashes forward
  */
 import org.bukkit.ChatColor;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 public class Mark extends ClassSkill implements SkillShot {
@@ -41,7 +42,7 @@ public class Mark extends ClassSkill implements SkillShot {
         super(NAME, SkillType.SELF, Material.BED, 1);
         this.plugin = plugin;
 
-        description.add("testing");
+        description.add("fill in, in yml");
 
         setAttribute(SkillAttribute.COOLDOWN, 20, -3);
         setAttribute(SkillAttribute.COST, 2, 0);
@@ -62,14 +63,11 @@ public class Mark extends ClassSkill implements SkillShot {
     public boolean cast(Player player, int level) {
        if (player.getInventory().contains(Material.GOLD_INGOT, (int) getAttribute("reagent-cost", level))) {
             int cost = (int) getAttribute("reagent-cost", level);
-            for(int i = 0; i < cost; i++) {
-               player.getInventory().remove(Material.GOLD_INGOT); 
-            }
-                    
-            
-        }
-        else {
-            player.sendMessage("You require gold to mark your location.");
+            ItemStack reagentCost = new ItemStack(Material.GOLD_INGOT, cost);
+            player.getInventory().remove(reagentCost);
+       }
+       else {
+            player.sendMessage("You require " + (int) getAttribute("reagent-cost", level) + " gold ingots to mark your location.");
             return false;
         }
         Config markConfig = new Config(this.plugin, "Marks" + File.separator + player.getName());

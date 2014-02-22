@@ -77,6 +77,7 @@ public class ConquestiaSkills extends JavaPlugin implements SkillPlugin, Listene
         reloadConfig();
         Config PlayerConfig = new Config(this, "players"); //unused as of now.
         Config markConfig = new Config(this, "Marks" + File.separator);
+        playersInArena = new ArrayList();
     }
     public JavaPlugin getPlugin() {
         return this;
@@ -191,12 +192,13 @@ public class ConquestiaSkills extends JavaPlugin implements SkillPlugin, Listene
              if ((System.currentTimeMillis() - savedTime) < timeLength) {
                 event.setExp((int)(event.getExp()*this.factor));
             }
-            if (playersInArena.contains(event.getPlayerData().getPlayer()))
+            if (!(playersInArena.isEmpty()) && playersInArena.contains(event.getPlayerData().getPlayer()))
             {
                 event.setExp((int)(event.getExp()*0.25));
             }
-            event.getPlayerData().getPlayer().sendMessage("You gained " + event.getExp() + " xp");
         }
+        
+        event.getPlayerData().getPlayer().sendMessage("You gained " + event.getExp() + " xp");
     }
   
   @EventHandler(priority=EventPriority.HIGH, ignoreCancelled=false)
@@ -217,6 +219,7 @@ public class ConquestiaSkills extends JavaPlugin implements SkillPlugin, Listene
   {
       playersInArena.remove(event.getPlayer());
   }
+  
 }
 
 
