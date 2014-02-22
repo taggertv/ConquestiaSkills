@@ -63,8 +63,10 @@ public class Mark extends ClassSkill implements SkillShot {
     public boolean cast(Player player, int level) {
        if (player.getInventory().contains(Material.GOLD_INGOT, (int) getAttribute("reagent-cost", level))) {
             int cost = (int) getAttribute("reagent-cost", level);
-            ItemStack reagentCost = new ItemStack(Material.GOLD_INGOT, cost);
-            player.getInventory().remove(reagentCost);
+            ItemStack reagentCost = new ItemStack(Material.GOLD_INGOT, (int) getAttribute("reagent-cost", level));
+            //reagentCost.setAmount((int)getAttribute("reagent-cost", level));
+            //player.getInventory().remove(reagentCost);
+            player.getInventory().removeItem(reagentCost);
        }
        else {
             player.sendMessage(ChatColor.DARK_RED + "You require " + (int) getAttribute("reagent-cost", level) + " gold ingots to mark your location.");
