@@ -13,12 +13,12 @@ import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.minecraft.server.v1_7_R1.ItemStack;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 /**
@@ -51,25 +51,20 @@ public class Recall extends ClassSkill implements SkillShot {
     }
 
     /**
-     * Dashes forward
-     *
-     * @param player player casting the skill
-     * @param i      skill level
-     * @return       true
+     * Need to change
      */
     @Override
     public boolean cast(Player player, int level) {
        
         if (player.getInventory().contains(Material.REDSTONE, (int) getAttribute("reagent-cost", level))) {
             int cost = (int) getAttribute("reagent-cost", level);
-            for(int i = 0; i < cost; i++) {
-               player.getInventory().remove(Material.REDSTONE); 
-            }
+            ItemStack reagentCost = new ItemStack(Material.REDSTONE, cost);
+            player.getInventory().removeItem(reagentCost);
                     
             
         }
         else {
-            player.sendMessage("You require redstone to open the aether.");
+            player.sendMessage(ChatColor.DARK_RED + "You require redstone to open the aether.");
             return false;
         }
         Config markConfig = new Config(this.plugin, "Marks" + File.separator + player.getName());
