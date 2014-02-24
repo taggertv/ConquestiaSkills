@@ -22,7 +22,7 @@ public class Paladin extends CustomClass {
         super(NAME, "Knight", ChatColor.RED + NAME, 50, 50);
 
         // Class attributes
-        setAttribute(ClassAttribute.HEALTH, 110, 2);
+        setAttribute(ClassAttribute.HEALTH, 85, 2);
         setAttribute(ClassAttribute.MANA, 195, 4);
         
         addSkills(

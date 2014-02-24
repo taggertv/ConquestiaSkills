@@ -16,8 +16,10 @@ import com.ultiferrago.conquestiaskills.Classes.Assassin;
 import com.ultiferrago.conquestiaskills.Classes.Bannerman;
 import com.ultiferrago.conquestiaskills.Classes.Berserker;
 import com.ultiferrago.conquestiaskills.Classes.Bishop;
+import com.ultiferrago.conquestiaskills.Classes.Captain;
 import com.ultiferrago.conquestiaskills.Classes.Commander;
 import com.ultiferrago.conquestiaskills.Classes.Druid;
+import com.ultiferrago.conquestiaskills.Classes.Guard;
 import com.ultiferrago.conquestiaskills.Classes.Hunter;
 import com.ultiferrago.conquestiaskills.Classes.Knight;
 import com.ultiferrago.conquestiaskills.Classes.Mercenary;
@@ -123,10 +125,10 @@ public class ConquestiaSkills extends JavaPlugin implements SkillPlugin, Listene
                 new Soldier(), //Melee Base
                 new Mercenary(), //Melee Dps 1
                 new Berserker(), //Melee Dps 2
-                new Bannerman(), //Melee Support 1
-                new Commander(), //Melee Support 2
-                new Knight(), //Melee Tank 1
-                new Paladin(), //Melee Tank 2
+                new Guard(), //Melee Tank 1
+                new Captain(), //Melee Tank 2
+                new Knight(), //Melee Support 1
+                new Paladin(), //Melee Support 2
                 //Ranged Classes
                 new Hunter(), //Range Base
                 new Rogue(), //Range Dps 1

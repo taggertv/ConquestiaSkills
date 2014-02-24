@@ -22,7 +22,7 @@ public class Knight extends CustomClass {
         super(NAME, "Soldier", ChatColor.RED + NAME, 40, 40);
 
         // Class attributes
-        setAttribute(ClassAttribute.HEALTH, 55, 1);
+        setAttribute(ClassAttribute.HEALTH, 45, 1);
         setAttribute(ClassAttribute.MANA, 75, 3);
         
         addSkills(

@@ -8,22 +8,22 @@ import org.bukkit.ChatColor;
 /**
  * Fill in later, too lazy.
  */
-public class Commander extends CustomClass {
+public class Guard extends CustomClass {
 
-    public static final String NAME = "Commander";
+    public static final String NAME = "Guard";
 
     /**
      * Constructor
      */
-    public Commander() {
+    public Guard() {
 
         // null for 2nd parameter means this is a starting class
         // params Name, preReq class, Display name tyle, profess level, max level
-        super(NAME, "Bannerman", ChatColor.RED + NAME, 50, 50);
+        super(NAME, "Soldier", ChatColor.RED + NAME, 40, 40);
 
         // Class attributes
-        setAttribute(ClassAttribute.HEALTH, 85, 2);
-        setAttribute(ClassAttribute.MANA, 155, 4);
+        setAttribute(ClassAttribute.HEALTH, 55, 1);
+        setAttribute(ClassAttribute.MANA, 75, 2);
         
         addSkills(
 
