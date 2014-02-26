@@ -7,6 +7,7 @@ package com.ultiferrago.conquestiaskills;
 import com.garbagemule.MobArena.events.ArenaPlayerJoinEvent;
 import com.garbagemule.MobArena.events.ArenaPlayerLeaveEvent;
 import com.sucy.skill.SkillAPI;
+import com.sucy.skill.api.PlayerSkills;
 import com.sucy.skill.api.SkillPlugin;
 import com.sucy.skill.api.event.PlayerExperienceGainEvent;
 import com.sucy.skill.api.util.TextSizer;
@@ -43,11 +44,17 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
+import org.bukkit.entity.Creature;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
 
@@ -186,7 +193,7 @@ public class ConquestiaSkills extends JavaPlugin implements SkillPlugin, Listene
     {
         if (!event.isCommandExp())
         {
-             if ((System.currentTimeMillis() - savedTime) < timeLength) {
+            if ((System.currentTimeMillis() - savedTime) < timeLength) {
                 event.setExp((int)(event.getExp()*this.factor));
             }
             if (!(playersInArena.isEmpty()) && playersInArena.contains(event.getPlayerData().getPlayer()))
@@ -217,7 +224,22 @@ public class ConquestiaSkills extends JavaPlugin implements SkillPlugin, Listene
       playersInArena.remove(event.getPlayer());
   }
   
-}
+  @EventHandler(priority=EventPriority.NORMAL, ignoreCancelled=false)
+  public void onPlayerRightClick(PlayerInteractEvent event)
+  {
+      if (event.getPlayer().getItemInHand().getType() == Material.BOOK)
+      {
+          if (event.getPlayer().getItemInHand().getItemMeta().getDisplayName().contains("§6§lGuidebook"))
+          {
+              event.getPlayer().performCommand("chc open main-menu.yml");
+              
+          }
+          
+      }
+  }
+ }
+  
+
 
 
 
