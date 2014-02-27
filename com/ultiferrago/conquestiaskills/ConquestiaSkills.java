@@ -43,11 +43,15 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.entity.Creature;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Wolf;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -71,6 +75,16 @@ public class ConquestiaSkills extends JavaPlugin implements SkillPlugin, Listene
     private long savedTime;
     private ArrayList<Player> playersInArena;
     public void onEnable() {
+        for (World world : Bukkit.getServer().getWorlds())
+        {
+            for (Entity ent : world.getEntities())
+            {
+                LivingEntity le = (LivingEntity)ent;
+                Creature cle = (Creature)le;
+                
+                
+            }
+        }
         getServer().getPluginManager().registerEvents(this, this);
         new CqCommandHandler(this);
         factor = 1;
@@ -234,7 +248,15 @@ public class ConquestiaSkills extends JavaPlugin implements SkillPlugin, Listene
               event.getPlayer().performCommand("chc open main-menu.yml");
               
           }
-          
+      }
+      if (event.getPlayer().getItemInHand().getType() == Material.POTION && event.getPlayer().getItemInHand().getItemMeta().getDisplayName().toLowerCase().contains("mana potion"))
+      {
+          PlayerSkills pskills = new PlayerSkills((SkillAPI)getPlugin(), event.getPlayer().getDisplayName());
+          pskills.gainMana((int)Math.floor(pskills.getMaxMana() * .1));
+          ItemStack potion = event.getPlayer().getItemInHand();
+          potion.setAmount(1);
+          event.getPlayer().getInventory().removeItem(potion);
+          event.getPlayer().sendMessage("You restored " + (int)Math.floor(pskills.getMaxMana() * .1) + " Mana!" );
       }
   }
  }
