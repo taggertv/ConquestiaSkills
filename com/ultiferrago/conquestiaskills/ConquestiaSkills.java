@@ -55,8 +55,10 @@ import org.bukkit.entity.Wolf;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -75,16 +77,6 @@ public class ConquestiaSkills extends JavaPlugin implements SkillPlugin, Listene
     private long savedTime;
     private ArrayList<Player> playersInArena;
     public void onEnable() {
-        for (World world : Bukkit.getServer().getWorlds())
-        {
-            for (Entity ent : world.getEntities())
-            {
-                LivingEntity le = (LivingEntity)ent;
-                Creature cle = (Creature)le;
-                
-                
-            }
-        }
         getServer().getPluginManager().registerEvents(this, this);
         new CqCommandHandler(this);
         factor = 1;
@@ -97,8 +89,8 @@ public class ConquestiaSkills extends JavaPlugin implements SkillPlugin, Listene
         Config markConfig = new Config(this, "Marks" + File.separator);
         playersInArena = new ArrayList();
     }
-    public JavaPlugin getPlugin() {
-        return this;
+    public SkillAPI getSkillAPIPlugin() {
+        return (SkillAPI)this.getServer().getPluginManager().getPlugin("SkillAPI");
     }
     public void doubleXp(long currentTimeIn, long timeLengthIn, double factorIn)
     {
@@ -125,8 +117,8 @@ public class ConquestiaSkills extends JavaPlugin implements SkillPlugin, Listene
     public void registerSkills(SkillAPI api) {
         api.addSkills(
            new Whirlwind(),
-           new Mark(getPlugin()),
-           new Recall(getPlugin()),
+           new Mark(this),
+           new Recall(this),
            new ThunderStorm()
                 );
         
@@ -239,9 +231,9 @@ public class ConquestiaSkills extends JavaPlugin implements SkillPlugin, Listene
   }
   
   @EventHandler(priority=EventPriority.NORMAL, ignoreCancelled=false)
-  public void onPlayerRightClick(PlayerInteractEvent event)
+  public void onPlayerClick(PlayerInteractEvent event)
   {
-      if (event.getPlayer().getItemInHand().getType() == Material.BOOK)
+      if (event.getPlayer().getItemInHand().getType() == Material.BOOK && (event.getAction().compareTo(Action.RIGHT_CLICK_AIR) == 0 || event.getAction().compareTo(Action.RIGHT_CLICK_BLOCK) == 0))
       {
           if (event.getPlayer().getItemInHand().getItemMeta().getDisplayName().contains("§6§lGuidebook"))
           {
@@ -249,14 +241,36 @@ public class ConquestiaSkills extends JavaPlugin implements SkillPlugin, Listene
               
           }
       }
-      if (event.getPlayer().getItemInHand().getType() == Material.POTION && event.getPlayer().getItemInHand().getItemMeta().getDisplayName().toLowerCase().contains("mana potion"))
+  }
+  
+  @EventHandler(priority=EventPriority.LOWEST, ignoreCancelled=false)
+  public void onPlayerConsumption(PlayerItemConsumeEvent event)
+  {
+      if (event.getItem().getItemMeta().getDisplayName() != null && event.getItem().getItemMeta().getDisplayName().toLowerCase().contains("§1") && event.getItem().getItemMeta().getDisplayName().toLowerCase().contains("mana potion"))
       {
-          PlayerSkills pskills = new PlayerSkills((SkillAPI)getPlugin(), event.getPlayer().getDisplayName());
-          pskills.gainMana((int)Math.floor(pskills.getMaxMana() * .1));
-          ItemStack potion = event.getPlayer().getItemInHand();
-          potion.setAmount(1);
-          event.getPlayer().getInventory().removeItem(potion);
-          event.getPlayer().sendMessage("You restored " + (int)Math.floor(pskills.getMaxMana() * .1) + " Mana!" );
+          for (String lore : event.getItem().getItemMeta().getLore())
+          {
+              int manaRestore = 0;
+              if (lore.toLowerCase().contains("restores"))
+              {
+                  ChatColor.stripColor(lore);
+                  int start = lore.toLowerCase().indexOf("restores")+9;
+                  int end = lore.toLowerCase().indexOf("mana")-1;
+                  manaRestore = Integer.parseInt(lore.substring(start, end));
+              }
+              PlayerSkills pskills = new PlayerSkills(getSkillAPIPlugin(),event.getPlayer().getDisplayName());
+              if (pskills.getMaxMana() < pskills.getMana() + manaRestore)
+              {
+                  pskills.gainMana(pskills.getMaxMana() - pskills.getMana());
+                  event.getPlayer().sendMessage("Restored " + (pskills.getMaxMana() - pskills.getMana()) + " mana");
+              }
+              else
+              {
+                  pskills.gainMana(manaRestore);
+                  event.getPlayer().sendMessage("Restored " + manaRestore + " mana!");
+              }
+              
+          }
       }
   }
  }
