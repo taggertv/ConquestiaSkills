@@ -43,24 +43,16 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.World;
-import org.bukkit.entity.Creature;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Wolf;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
 
@@ -241,6 +233,7 @@ public class ConquestiaSkills extends JavaPlugin implements SkillPlugin, Listene
               
           }
       }
+      
   }
   
   @EventHandler(priority=EventPriority.LOWEST, ignoreCancelled=false)
@@ -259,6 +252,11 @@ public class ConquestiaSkills extends JavaPlugin implements SkillPlugin, Listene
                   manaRestore = Integer.parseInt(lore.substring(start, end));
               }
               PlayerSkills pskills = new PlayerSkills(getSkillAPIPlugin(),event.getPlayer().getDisplayName());
+              if (pskills.getMana() == pskills.getMaxMana())
+              {
+                  event.getPlayer().sendMessage("You have full mana!");
+                  event.setCancelled(true);
+              }
               if (pskills.getMaxMana() < pskills.getMana() + manaRestore)
               {
                   pskills.gainMana(pskills.getMaxMana() - pskills.getMana());
