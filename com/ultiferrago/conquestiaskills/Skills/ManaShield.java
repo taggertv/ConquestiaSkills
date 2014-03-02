@@ -7,12 +7,16 @@ package com.ultiferrago.conquestiaskills.Skills;
 import com.sucy.skill.SkillAPI;
 import com.sucy.skill.api.PlayerSkills;
 import com.sucy.skill.api.skill.ClassSkill;
+import com.sucy.skill.api.skill.SkillShot;
 import com.sucy.skill.api.skill.SkillType;
 import com.sucy.skill.api.skill.TargetSkill;
+import com.sucy.skill.api.util.Protection;
+import com.sucy.skill.api.util.TargetHelper;
 import java.util.HashMap;
 import org.bukkit.ChatColor;
 import org.bukkit.Effect;
 import org.bukkit.Material;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -24,7 +28,7 @@ import org.bukkit.event.entity.EntityDeathEvent;
  *
  * @author ferrago
  */
-public class ManaShield extends ClassSkill implements TargetSkill, Listener
+public class ManaShield extends ClassSkill implements SkillShot, Listener
 {
     public final static String NAME = "Mana Shield";
     public HashMap shielded = new HashMap<Player,Long>();
@@ -38,6 +42,7 @@ public class ManaShield extends ClassSkill implements TargetSkill, Listener
         setAttribute("Shield-Duration", 60, 0);
         setAttribute("Shield-Percent", 80, 2);
         setAttribute("Mana-Drain-Percent", 100, -5);
+        setAttribute("Range", 15, 2);
         this.plugin = plugin;
         
    
@@ -45,8 +50,10 @@ public class ManaShield extends ClassSkill implements TargetSkill, Listener
     }
 
     @Override
-    public boolean cast(Player player, LivingEntity target, int level, boolean ally) {
-        if ((target instanceof Player) && ally)
+    public boolean cast(Player player, int level) 
+    {
+        LivingEntity target = TargetHelper.getLivingTarget(player, getAttribute("Range", level));
+        if ((target instanceof Player) && Protection.isAlly(player, target))
         {
            LEVEL = level;
            shielded.put(target, System.currentTimeMillis());

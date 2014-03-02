@@ -1,6 +1,6 @@
 name: ConquestiaSkills
 main: com.ultiferrago.conquestiaskills.ConquestiaSkills
-version: 0.3
+version: 0.3.1
 author: Ultiferrago
 depend: [SkillAPI]
 
