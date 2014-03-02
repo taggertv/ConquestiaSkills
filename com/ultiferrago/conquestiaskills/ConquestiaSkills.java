@@ -38,6 +38,9 @@ import com.ultiferrago.conquestiaskills.Skills.Whirlwind;
 import com.ultiferrago.conquestiaskills.Skills.Recall;
 import com.ultiferrago.conquestiaskills.Skills.ThunderStorm;
 import com.ultiferrago.conquestiaskills.Config.Config;
+import com.ultiferrago.conquestiaskills.Skills.Fireball;
+import com.ultiferrago.conquestiaskills.Skills.ManaShield;
+import com.ultiferrago.conquestiaskills.Skills.Pray;
 import com.ultiferrago.conquestiaskills.command.CqCommandHandler;
 import java.io.File;
 import java.util.ArrayList;
@@ -67,6 +70,7 @@ public class ConquestiaSkills extends JavaPlugin implements SkillPlugin, Listene
     private double factor;
     private long timeLength;
     private long savedTime;
+    private SkillAPI api;
     private ArrayList<Player> playersInArena;
     public void onEnable() {
         getServer().getPluginManager().registerEvents(this, this);
@@ -82,7 +86,7 @@ public class ConquestiaSkills extends JavaPlugin implements SkillPlugin, Listene
         playersInArena = new ArrayList();
     }
     public SkillAPI getSkillAPIPlugin() {
-        return (SkillAPI)this.getServer().getPluginManager().getPlugin("SkillAPI");
+        return api;
     }
     public void doubleXp(long currentTimeIn, long timeLengthIn, double factorIn)
     {
@@ -107,11 +111,17 @@ public class ConquestiaSkills extends JavaPlugin implements SkillPlugin, Listene
     }
     @Override
     public void registerSkills(SkillAPI api) {
+        this.api = api;
         api.addSkills(
+           //Unassigned Skills
            new Whirlwind(),
            new Mark(this),
            new Recall(this),
-           new ThunderStorm()
+           new ThunderStorm(),
+           //Pupil Skills
+           new Fireball(api),
+           new Pray(api),
+           new ManaShield(api)
                 );
         
     }
@@ -239,7 +249,7 @@ public class ConquestiaSkills extends JavaPlugin implements SkillPlugin, Listene
   @EventHandler(priority=EventPriority.LOWEST, ignoreCancelled=false)
   public void onPlayerConsumption(PlayerItemConsumeEvent event)
   {
-      if (event.getItem().getItemMeta().getDisplayName() != null && event.getItem().getItemMeta().getDisplayName().toLowerCase().contains("§1") && event.getItem().getItemMeta().getDisplayName().toLowerCase().contains("mana potion"))
+      if (event.getItem().getItemMeta().getDisplayName() != null && event.getItem().getItemMeta().getDisplayName().toLowerCase().contains("§b") && event.getItem().getItemMeta().getDisplayName().toLowerCase().contains("mana potion"))
       {
           for (String lore : event.getItem().getItemMeta().getLore())
           {
@@ -251,21 +261,21 @@ public class ConquestiaSkills extends JavaPlugin implements SkillPlugin, Listene
                   int end = lore.toLowerCase().indexOf("mana")-1;
                   manaRestore = Integer.parseInt(lore.substring(start, end));
               }
-              PlayerSkills pskills = new PlayerSkills(getSkillAPIPlugin(),event.getPlayer().getDisplayName());
+              PlayerSkills pskills = getSkillAPIPlugin().getPlayer(event.getPlayer().getName());
               if (pskills.getMana() == pskills.getMaxMana())
               {
-                  event.getPlayer().sendMessage("You have full mana!");
+                  event.getPlayer().sendMessage(ChatColor.DARK_RED + "You have full mana!");
                   event.setCancelled(true);
               }
-              if (pskills.getMaxMana() < pskills.getMana() + manaRestore)
+              else if (pskills.getMaxMana() < pskills.getMana() + manaRestore)
               {
                   pskills.gainMana(pskills.getMaxMana() - pskills.getMana());
-                  event.getPlayer().sendMessage("Restored " + (pskills.getMaxMana() - pskills.getMana()) + " mana");
+                  event.getPlayer().sendMessage(ChatColor.GREEN + "Restored " + (pskills.getMaxMana() - pskills.getMana()) + " mana");
               }
               else
               {
                   pskills.gainMana(manaRestore);
-                  event.getPlayer().sendMessage("Restored " + manaRestore + " mana!");
+                  event.getPlayer().sendMessage(ChatColor.GREEN + "Restored " + manaRestore + " mana!");
               }
               
           }

@@ -2,6 +2,7 @@ package com.ultiferrago.conquestiaskills.Classes;
 
 import com.sucy.skill.api.ClassAttribute;
 import com.sucy.skill.api.CustomClass;
+import com.ultiferrago.conquestiaskills.Skills.Fireball;
 import com.ultiferrago.conquestiaskills.Skills.Mark;
 import com.ultiferrago.conquestiaskills.Skills.Recall;
 import com.ultiferrago.conquestiaskills.Skills.ThunderStorm;
@@ -36,7 +37,8 @@ public class Tester extends CustomClass {
                 Mark.NAME,
                 Recall.NAME,
                 ThunderStorm.NAME,
-                Whirlwind.NAME
+                Whirlwind.NAME,
+                Fireball.NAME
         );
     }
 }

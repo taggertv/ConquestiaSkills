@@ -56,7 +56,7 @@ public class CmdBonusXp implements ICommand
         cq.doubleXp(System.currentTimeMillis(),this.time, this.factor);
         for (Player players : cq.getServer().getOnlinePlayers())
         {
-            players.sendMessage(ChatColor.GOLD + playerName + " purchased " + time + " hours of " + " factor " + "X exp");
+            players.sendMessage(ChatColor.GOLD + playerName + " purchased " + (time/3600000) + " hours of " + factor + "X exp");
         }
       }
     }
