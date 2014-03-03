@@ -3,6 +3,7 @@ package com.ultiferrago.conquestiaskills.Classes;
 import com.sucy.skill.api.ClassAttribute;
 import com.sucy.skill.api.CustomClass;
 import com.ultiferrago.conquestiaskills.Skills.Fireball;
+import com.ultiferrago.conquestiaskills.Skills.Icebolt;
 import com.ultiferrago.conquestiaskills.Skills.ManaShield;
 import com.ultiferrago.conquestiaskills.Skills.Pray;
 import org.bukkit.ChatColor;
@@ -31,7 +32,8 @@ public class Pupil extends CustomClass {
         addSkills(
                 Fireball.NAME,
                 Pray.NAME,
-                ManaShield.NAME
+                ManaShield.NAME,
+                Icebolt.NAME
         );
     }
 }

@@ -39,6 +39,7 @@ import com.ultiferrago.conquestiaskills.Skills.Recall;
 import com.ultiferrago.conquestiaskills.Skills.ThunderStorm;
 import com.ultiferrago.conquestiaskills.Config.Config;
 import com.ultiferrago.conquestiaskills.Skills.Fireball;
+import com.ultiferrago.conquestiaskills.Skills.Icebolt;
 import com.ultiferrago.conquestiaskills.Skills.ManaShield;
 import com.ultiferrago.conquestiaskills.Skills.Pray;
 import com.ultiferrago.conquestiaskills.command.CqCommandHandler;
@@ -121,7 +122,8 @@ public class ConquestiaSkills extends JavaPlugin implements SkillPlugin, Listene
            //Pupil Skills
            new Fireball(api),
            new Pray(api),
-           new ManaShield(api)
+           new ManaShield(api),
+           new Icebolt(api)
                 );
         
     }

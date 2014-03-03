@@ -7,6 +7,7 @@ package com.ultiferrago.conquestiaskills.Skills;
 import com.sucy.skill.SkillAPI;
 import com.sucy.skill.api.PlayerSkills;
 import com.sucy.skill.api.skill.ClassSkill;
+import com.sucy.skill.api.skill.SkillAttribute;
 import com.sucy.skill.api.skill.SkillShot;
 import com.sucy.skill.api.skill.SkillType;
 import com.sucy.skill.api.skill.TargetSkill;
@@ -23,6 +24,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.plugin.Plugin;
 
 /**
  *
@@ -43,7 +45,11 @@ public class ManaShield extends ClassSkill implements SkillShot, Listener
         setAttribute("Shield-Percent", 80, 2);
         setAttribute("Mana-Drain-Percent", 100, -5);
         setAttribute("Range", 15, 2);
+        setAttribute(SkillAttribute.MANA, 0, 0);
+        setAttribute(SkillAttribute.COOLDOWN, 0, 0);
+        setAttribute(SkillAttribute.LEVEL, 0, 0);
         this.plugin = plugin;
+        plugin.getServer().getPluginManager().registerEvents((Listener)this, plugin);
         
    
         
@@ -55,31 +61,29 @@ public class ManaShield extends ClassSkill implements SkillShot, Listener
         LivingEntity target = TargetHelper.getLivingTarget(player, getAttribute("Range", level));
         if ((target instanceof Player) && Protection.isAlly(player, target))
         {
+           player.sendMessage("is player, is ally");
            LEVEL = level;
            shielded.put(target, System.currentTimeMillis());
            shielders.put(target, player);
            Player targetPlayer = (Player)target;
-           if ((Player)target == player)
-           {
-               player.sendMessage(ChatColor.GREEN + "You use your mana to shield yourself");
-           }
-           else
-           {
-                targetPlayer.sendMessage(ChatColor.RED + player.getName() + ChatColor.RESET + ChatColor.GREEN + " is temporarily shielding you");
-           }
+           targetPlayer.sendMessage(ChatColor.RED + player.getName() + ChatColor.RESET + ChatColor.GREEN + " is temporarily shielding you");
            return true;
         }
         else
         {
-            return false;
+            shielders.put(player, player);
+            shielded.put(player, System.currentTimeMillis());
+            player.sendMessage("Shield on self");
+            return true;
         }
     }
     
     @EventHandler()
     public void onEntityDamage(EntityDamageByEntityEvent event)
     {
-        if (event.getEntity() instanceof Player && event.getDamager() instanceof Player && shielded.containsKey((Player)event.getEntity()) && (System.currentTimeMillis() - (long)shielded.get((Player)event.getEntity()) < (getAttribute("Shield-Duration", LEVEL) * 1000)))
+        if (event.getEntity() instanceof Player && event.getDamager() instanceof Player && shielded.containsKey((Player)event.getEntity()) && ((System.currentTimeMillis() - (long)shielded.get((Player)event.getEntity())) < (getAttribute("Shield-Duration", LEVEL) * 1000)))
         {
+            
             Player shielder = (Player)shielders.get((Player)event.getEntity());
             Player shieldedPlayer = (Player)event.getEntity();
             PlayerSkills shielderSkills = plugin.getPlayer(shielder.getName());

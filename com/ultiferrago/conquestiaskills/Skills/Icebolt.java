@@ -29,40 +29,37 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 /**
  *
  * @author ferrago
  */
-public class Fireball extends ClassSkill implements SkillShot, Listener
+public class Icebolt extends ClassSkill implements SkillShot, Listener
 {
-    public static final String NAME = "Fireball";
+    public static final String NAME = "Icebolt";
     public JavaPlugin plugin;
-    private final Map<Snowball, Long> fireballs = new LinkedHashMap(100); 
+    private final Map<Snowball, Long> snowballs = new LinkedHashMap(100); 
     private static final long serialVersionUID = 4329526013158603250L;
-    private double damage;
-    private int level;
-    private ArrayList<Player> throwers;
-    private ArrayList<Location> explosionLoc;
-    private int explosionSize;
-    private int damageRadius; 
-    private double explosionDamage;
+    public double damage;
+    public int level;
+    public ArrayList<Player> throwers;
     
-    public Fireball(JavaPlugin plugin)
+    public Icebolt(JavaPlugin plugin)
     {
-        super(NAME, SkillType.SKILL_SHOT, Material.FIRE, 1);
+        super(NAME, SkillType.SKILL_SHOT, Material.SNOW_BALL, 1);
         this.plugin = plugin;
         throwers = new ArrayList();
-        explosionLoc = new ArrayList();
         description.add("fill in, in yml");
-        setAttribute(SkillAttribute.LEVEL, 1, 0);
         setAttribute("Velocity", 3, 0);
-        setAttribute("Fire-Ticks", 100, 0);
         setAttribute("Damage", 3, 1);
-        setAttribute("Block-Explode", 0, 0);
-        setAttribute("Explosion-Size", 0, 0);
-        setAttribute("Damage-Radius", 0, 0);
-        setAttribute("Explosion-Damage", 0, 0);
+        setAttribute("Slow-Duration", 10, 0);
+        setAttribute("Speed-Mult", 2, 0);
+        setAttribute("Ambient", 1, 0);
+        setAttribute(SkillAttribute.MANA, 10, 2);
+        setAttribute(SkillAttribute.COOLDOWN, 0, 0);
+        setAttribute(SkillAttribute.LEVEL, 0 , 0);
     }
 
     @Override
@@ -70,16 +67,13 @@ public class Fireball extends ClassSkill implements SkillShot, Listener
     {
     Player player = playerIn;
     throwers.add(player);
-    Snowball fireball = (Snowball)player.launchProjectile(Snowball.class);
-    fireball.setFireTicks(100);
-    this.fireballs.put(fireball, Long.valueOf(System.currentTimeMillis()));
+    Snowball snowball = (Snowball)player.launchProjectile(Snowball.class);
+    snowball.setFireTicks(100);
+    this.snowballs.put(snowball, Long.valueOf(System.currentTimeMillis()));
     double mult = getAttribute("Velocity", level);
     damage = getAttribute("Damage", level);
-    explosionSize = (int)getAttribute("Explosion-Size", level);
-    damageRadius = (int)getAttribute("Damage-Radius", level);
-    explosionDamage = getAttribute("Explosion-Damage", level);
     this.level = level;
-    fireball.setVelocity(fireball.getVelocity().multiply(2));
+    snowball.setVelocity(snowball.getVelocity().multiply(2));
     return true;
     }
     
@@ -96,10 +90,10 @@ public class Fireball extends ClassSkill implements SkillShot, Listener
 
 
       Entity projectile = subEvent.getDamager();
-      if ((!(projectile instanceof Snowball)) || (!Fireball.this.fireballs.containsKey(projectile))) {
+      if ((!(projectile instanceof Snowball)) || (!Icebolt.this.snowballs.containsKey(projectile))) {
         return;
       }
-      Fireball.this.fireballs.remove(projectile);
+      Icebolt.this.snowballs.remove(projectile);
       LivingEntity entity = (LivingEntity)subEvent.getEntity();
       Entity dmger = ((Snowball)projectile).getShooter();
 
@@ -108,21 +102,30 @@ public class Fireball extends ClassSkill implements SkillShot, Listener
       {
         Player player = (Player)dmger;
         PlayerSkills pskills = new PlayerSkills((SkillAPI)plugin, player.getDisplayName());
-        entity.setFireTicks((int)getAttribute("Fire-Ticks", pskills.getLevel()));
         if (event.getEntity() instanceof Player)
         {
             Player target = (Player)event.getEntity();
             target.damage(damage);
-            target.sendMessage(player.getDisplayName() + "hit you for " + damage + " damage with a fireball!");
-            player.sendMessage("You hit " + target.getDisplayName() + "for " + damage + " damage with a fireball!");
+            int duration = (int)(getAttribute("Slow-Duration", level) * 1000);
+            int mult = (int)getAttribute("Speed-Mult", level);
+            boolean ambient = getAttribute("Ambient", level) == 1;
+            PotionEffect pe = new PotionEffect(PotionEffectType.SLOW, duration, mult, ambient);
+            target.addPotionEffect(pe);
+            target.sendMessage(player.getDisplayName() + "hit you for " + damage + " damage with an icebolt, and are slowed for " + duration + " seconds!");
+            player.sendMessage("You hit " + target.getDisplayName() + "for " + damage + " damage with an icebolt! Slowing them for " + duration + " seconds.");
             event.setCancelled(true);
         }
         else if (event.getEntity() instanceof Creature)
         {
             Creature target = (Creature)event.getEntity();
             target.damage(damage);
-            player.sendMessage("You hit " + target.getCustomName() + " for " + damage + " damage with a fireball!");
-            fireballs.clear();
+            int duration = (int)(getAttribute("Slow-Duration", level) * 1000);
+            int mult = (int)getAttribute("Speed-Mult", level);
+            boolean ambient = getAttribute("Ambient", level) == 1;
+            PotionEffect pe = new PotionEffect(PotionEffectType.SLOW, duration, mult, ambient);
+            target.addPotionEffect(pe);
+            player.sendMessage("You hit " + target.getCustomName() + " for " + damage + " damage with an icebolt!");
+            snowballs.clear();
             event.setCancelled(true);
         }
             
@@ -134,27 +137,10 @@ public class Fireball extends ClassSkill implements SkillShot, Listener
     {
         if (event.getEntityType() == EntityType.SNOWBALL && (throwers.contains((Player)event.getEntity().getShooter())) && level == api.getSkill("Fireball").getMaxLevel())
         {
-            event.getEntity().getWorld().createExplosion(event.getEntity().getLocation().getX(), event.getEntity().getLocation().getY(), event.getEntity().getLocation().getZ(), explosionSize, false, false);
-            for (Entity e : event.getEntity().getNearbyEntities(damageRadius, damageRadius, damageRadius))
-            {
-                if (e instanceof LivingEntity)
-                {
-                    LivingEntity le = (LivingEntity)e;
-                    le.damage(explosionDamage);
-                }
-            }
             throwers.remove((Player)event.getEntity().getShooter());
         }
     }
     
-    @EventHandler
-    public void onExplosion(EntityExplodeEvent event)
-    {
-        if (explosionLoc.contains(event.getLocation()))
-        {
-            event.setCancelled(true);
-        }
-    }
     
     
     
