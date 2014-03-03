@@ -13,7 +13,6 @@ import com.sucy.skill.api.skill.SkillType;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Creature;
 import org.bukkit.entity.Entity;
@@ -26,7 +25,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
-import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
@@ -68,7 +66,6 @@ public class Icebolt extends ClassSkill implements SkillShot, Listener
     Player player = playerIn;
     throwers.add(player);
     Snowball snowball = (Snowball)player.launchProjectile(Snowball.class);
-    snowball.setFireTicks(100);
     this.snowballs.put(snowball, Long.valueOf(System.currentTimeMillis()));
     double mult = getAttribute("Velocity", level);
     damage = getAttribute("Damage", level);
@@ -101,25 +98,25 @@ public class Icebolt extends ClassSkill implements SkillShot, Listener
       if ((dmger instanceof Player)) 
       {
         Player player = (Player)dmger;
-        PlayerSkills pskills = new PlayerSkills((SkillAPI)plugin, player.getDisplayName());
+        PlayerSkills pskills = api.getPlayer(player.getName());
         if (event.getEntity() instanceof Player)
         {
             Player target = (Player)event.getEntity();
             target.damage(damage);
-            int duration = (int)(getAttribute("Slow-Duration", level) * 1000);
+            int duration = (int)(getAttribute("Slow-Duration", level) * 20);
             int mult = (int)getAttribute("Speed-Mult", level);
             boolean ambient = getAttribute("Ambient", level) == 1;
             PotionEffect pe = new PotionEffect(PotionEffectType.SLOW, duration, mult, ambient);
             target.addPotionEffect(pe);
-            target.sendMessage(player.getDisplayName() + "hit you for " + damage + " damage with an icebolt, and are slowed for " + duration + " seconds!");
-            player.sendMessage("You hit " + target.getDisplayName() + "for " + damage + " damage with an icebolt! Slowing them for " + duration + " seconds.");
+            target.sendMessage(player.getDisplayName() + "hit you for " + damage + " damage with an icebolt, and are slowed for " + duration/20 + " seconds!");
+            player.sendMessage("You hit " + target.getDisplayName() + "for " + damage + " damage with an icebolt! Slowing them for " + duration/20 + " seconds.");
             event.setCancelled(true);
         }
         else if (event.getEntity() instanceof Creature)
         {
             Creature target = (Creature)event.getEntity();
             target.damage(damage);
-            int duration = (int)(getAttribute("Slow-Duration", level) * 1000);
+            int duration = (int)(getAttribute("Slow-Duration", level) * 20);
             int mult = (int)getAttribute("Speed-Mult", level);
             boolean ambient = getAttribute("Ambient", level) == 1;
             PotionEffect pe = new PotionEffect(PotionEffectType.SLOW, duration, mult, ambient);

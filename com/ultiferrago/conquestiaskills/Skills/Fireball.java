@@ -107,7 +107,7 @@ public class Fireball extends ClassSkill implements SkillShot, Listener
       if ((dmger instanceof Player)) 
       {
         Player player = (Player)dmger;
-        PlayerSkills pskills = new PlayerSkills((SkillAPI)plugin, player.getDisplayName());
+        PlayerSkills pskills = api.getPlayer(player.getName());
         entity.setFireTicks((int)getAttribute("Fire-Ticks", pskills.getLevel()));
         if (event.getEntity() instanceof Player)
         {
